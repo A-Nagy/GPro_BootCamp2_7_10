@@ -1,3 +1,5 @@
+﻿using GPro_BootCamp2_7_10_Application.Interfaces;
+using GPro_BootCamp2_7_10_Application.Services;
 using GPro_BootCamp2_7_10_Infrastructure.Persistence;
 using GPro_BootCamp2_7_10_Infrastructure.Repositories;
 using GPro_BootCamp2_7_10_Infrastructure.Repositories.Base;
@@ -58,11 +60,45 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>),typeof(MainRepository<>));
 builder.Services.AddScoped<IUnitofWork,UnitofWork>();
+builder.Services.AddScoped<ICategoryService,CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+ builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "GPro_BootCamp2_7_10_API", Version = "v1" });
+
+    // تعريف أمن Bearer
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "Bearer{token}",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 
 builder.Services.AddCors(options =>

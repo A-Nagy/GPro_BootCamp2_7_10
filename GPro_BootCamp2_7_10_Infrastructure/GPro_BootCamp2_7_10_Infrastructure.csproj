@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GPro_BootCamp2_7_10_Application\GPro_BootCamp2_7_10_Application.csproj" />
     <ProjectReference Include="..\GPro_BootCamp2_7_10_Domain\GPro_BootCamp2_7_10_Domain.csproj" />
   </ItemGroup>
 
