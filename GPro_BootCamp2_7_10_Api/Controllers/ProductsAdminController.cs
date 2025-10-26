@@ -1,7 +1,5 @@
 ﻿using GPro_BootCamp2_7_10_Application.DTOs;
 using GPro_BootCamp2_7_10_Application.Interfaces;
-using GPro_BootCamp2_7_10_Application.DTOs;
-using GPro_BootCamp2_7_10_Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;

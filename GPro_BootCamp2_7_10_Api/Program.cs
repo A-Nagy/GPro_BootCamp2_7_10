@@ -3,6 +3,7 @@ using GPro_BootCamp2_7_10_Application.Services;
 using GPro_BootCamp2_7_10_Infrastructure.Persistence;
 using GPro_BootCamp2_7_10_Infrastructure.Repositories;
 using GPro_BootCamp2_7_10_Infrastructure.Repositories.Base;
+using GPro_BootCamp2_7_10_Infrastructure.Seeding;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -104,11 +105,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("dev",p =>
-    {
-             p.AllowAnyOrigin()
+             p.WithOrigins(
+                 "http://localhost:5027" , //Store 
+                 "http://localhost:5204" , //Dashboard
+                 "http://localhost:5081"  //Api
+             )
               .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+              .AllowAnyMethod());
 });
 
 
@@ -131,5 +134,15 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope()) 
+{
+    var sp = scope.ServiceProvider;
+    await AppSeeder.SeedAsync(
+        sp.GetRequiredService<ApplicationDbContext>(),
+        sp.GetRequiredService<UserManager<ApplicationUser>>(),
+        sp.GetRequiredService<RoleManager<ApplicationRole>>());
+}
+
 
 app.Run();
