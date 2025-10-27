@@ -19,21 +19,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+// DbContext
 builder.Services.AddIdentity<ApplicationUser,ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
+// Policies
 builder.Services.AddAuthorization(Options =>
 {
     Options.AddPolicy("Product.Read",p=>p.RequireClaim("Permission","Product.Read"));
     Options.AddPolicy("Product.Write",p => p.RequireClaim("Permission", "Product.Write"));
 });
-
+// JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
 
@@ -58,18 +58,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
+// Repos + UoW + Services
 builder.Services.AddScoped(typeof(IRepository<>),typeof(MainRepository<>));
 builder.Services.AddScoped<IUnitofWork,UnitofWork>();
 builder.Services.AddScoped<ICategoryService,CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-
+// Controllers + Swagger + CORS
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
+ 
  builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "GPro_BootCamp2_7_10_API", Version = "v1" });
@@ -101,7 +99,7 @@ builder.Services.AddSwaggerGen();
     });
 });
 
-
+// CORS (dev)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("dev",p =>
@@ -130,8 +128,14 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-app.UseStaticFiles();
+//Make The Static  File in cash For 7 Days
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
+    }
+});
 
 app.MapControllers();
 

@@ -43,6 +43,11 @@ namespace GPro_BootCamp2_7_10_Infrastructure.Persistence
 
             builder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
 
+            // Indexes (تحسين أداء)
+            builder.Entity<Product>().HasIndex(p => p.CategoryId);
+            builder.Entity<Product>().HasIndex(p => p.Name);
+            builder.Entity<Order>().HasIndex(o => o.CustomerId);
+            builder.Entity<OrderItem>().HasIndex(oi => new { oi.OrderId, oi.ProductId });
         }
 
     }

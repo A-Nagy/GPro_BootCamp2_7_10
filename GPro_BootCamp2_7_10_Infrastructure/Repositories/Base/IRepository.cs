@@ -10,6 +10,8 @@ namespace GPro_BootCamp2_7_10_Infrastructure.Repositories.Base
     {
         Task<T?> GetByIdAsync(int id);
         IQueryable<T> Query();
+        IQueryable<T> QueryUnfiltered(); // لل Trash
+
         Task AddAsync(T entity);
         void Update(T entity);
         void Remove(T entity);
